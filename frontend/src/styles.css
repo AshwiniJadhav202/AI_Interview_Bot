@@ -18,16 +18,7 @@ body{
 LOGIN PAGE
 ========================= */
 /* Full Page Background */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(to right, #001133, #000d26);
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+
 
 /* Login Card */
 .login-container {
