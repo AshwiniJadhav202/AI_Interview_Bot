@@ -1,0 +1,318 @@
+/* =========================
+GLOBAL
+========================= */
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+  background:#07122b;
+  color:white;
+}
+
+/* =========================
+LOGIN PAGE
+========================= */
+
+.login-page{
+  width:100%;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.login-box{
+  width:400px;
+  background:#111c3d;
+  padding:40px;
+  border-radius:20px;
+  box-shadow:0 0 20px rgba(0,0,0,0.5);
+}
+
+.login-box h1{
+  text-align:center;
+  margin-bottom:30px;
+  font-size:40px;
+}
+
+.login-box input{
+  width:100%;
+  padding:15px;
+  margin-bottom:20px;
+  border:none;
+  border-radius:10px;
+  font-size:18px;
+  outline:none;
+}
+
+.login-btn{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:10px;
+  background:#2563eb;
+  color:white;
+  font-size:20px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.login-btn:hover{
+  background:#1d4ed8;
+}
+
+/* =========================
+MAIN INTERVIEW PAGE
+========================= */
+
+.main-container{
+  width:100%;
+  min-height:100vh;
+  display:flex;
+}
+
+/* =========================
+LEFT SIDE
+========================= */
+
+.left-panel{
+  width:35%;
+  background:#0f1d40;
+  padding:25px;
+  border-right:3px solid #1e3a8a;
+}
+
+.left-panel h2{
+  margin-bottom:20px;
+  font-size:30px;
+}
+
+.camera-box{
+  width:100%;
+  height:300px;
+  background:black;
+  border-radius:15px;
+  overflow:hidden;
+  margin-bottom:20px;
+}
+
+.camera-box video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+.resume-upload{
+  width:100%;
+  padding:15px;
+  background:#1e293b;
+  border-radius:10px;
+  margin-bottom:20px;
+}
+
+.resume-upload input{
+  color:white;
+}
+
+.skills-box{
+  width:100%;
+  min-height:120px;
+  background:#1e293b;
+  border-radius:15px;
+  padding:15px;
+  margin-top:20px;
+}
+
+.skills-box h3{
+  margin-bottom:15px;
+}
+
+.skill-tag{
+  display:inline-block;
+  padding:10px 15px;
+  background:#2563eb;
+  border-radius:20px;
+  margin:5px;
+}
+
+/* =========================
+START BUTTON
+========================= */
+
+.start-btn{
+  width:100%;
+  padding:16px;
+  background:#22c55e;
+  border:none;
+  border-radius:12px;
+  color:white;
+  font-size:20px;
+  cursor:pointer;
+  margin-top:20px;
+  transition:0.3s;
+}
+
+.start-btn:hover{
+  background:#16a34a;
+}
+
+/* =========================
+RIGHT SIDE
+========================= */
+
+.right-panel{
+  width:65%;
+  padding:30px;
+}
+
+/* =========================
+QUESTION BOX
+========================= */
+
+.question-box{
+  background:#1e293b;
+  padding:30px;
+  border-radius:20px;
+  margin-bottom:20px;
+}
+
+.question-box h1{
+  margin-bottom:20px;
+  font-size:40px;
+}
+
+.question-text{
+  font-size:28px;
+  line-height:1.5;
+}
+
+/* =========================
+ANSWER BOX
+========================= */
+
+.answer-box{
+  width:100%;
+  height:250px;
+  border:none;
+  outline:none;
+  border-radius:20px;
+  padding:20px;
+  font-size:22px;
+  resize:none;
+  margin-bottom:20px;
+}
+
+/* =========================
+BUTTON ROW
+========================= */
+
+.button-row{
+  display:flex;
+  gap:20px;
+}
+
+.next-btn{
+  flex:1;
+  padding:18px;
+  border:none;
+  border-radius:12px;
+  background:#2563eb;
+  color:white;
+  font-size:22px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.next-btn:hover{
+  background:#1d4ed8;
+}
+
+.submit-btn{
+  flex:1;
+  padding:18px;
+  border:none;
+  border-radius:12px;
+  background:#dc2626;
+  color:white;
+  font-size:22px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.submit-btn:hover{
+  background:#b91c1c;
+}
+
+/* =========================
+RESULT PAGE
+========================= */
+
+.result-page{
+  width:100%;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.result-box{
+  width:600px;
+  background:#111c3d;
+  padding:40px;
+  border-radius:20px;
+  text-align:center;
+}
+
+.result-box h1{
+  font-size:45px;
+  margin-bottom:25px;
+}
+
+.score{
+  font-size:70px;
+  color:#22c55e;
+  margin-bottom:20px;
+}
+
+.performance{
+  font-size:30px;
+  margin-bottom:20px;
+}
+
+.suggestion{
+  font-size:22px;
+  line-height:1.8;
+  background:#1e293b;
+  padding:20px;
+  border-radius:15px;
+}
+
+/* =========================
+RESPONSIVE
+========================= */
+
+@media(max-width:1000px){
+
+  .main-container{
+    flex-direction:column;
+  }
+
+  .left-panel{
+    width:100%;
+    border-right:none;
+    border-bottom:3px solid #1e3a8a;
+  }
+
+  .right-panel{
+    width:100%;
+  }
+
+  .button-row{
+    flex-direction:column;
+  }
+}
