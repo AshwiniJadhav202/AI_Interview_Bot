@@ -360,3 +360,6 @@ Improve communication skills.
         "performance": performance,
         "suggestion": suggestion
     }
+@app.get("/")
+def home():
+    return {"message": "Backend Running Successfully"}
