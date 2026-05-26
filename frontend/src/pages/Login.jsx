@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./styles.css";
 
 const API = import.meta.env.VITE_API_URL;
 
@@ -46,7 +47,7 @@ const Login = () => {
 
       <div className="login-box">
 
-        <h1>AI Interview System</h1>
+        <h1>AI Interview Bot</h1>
 
         <input
           type="email"
