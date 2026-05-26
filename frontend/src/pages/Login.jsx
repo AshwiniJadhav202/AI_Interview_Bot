@@ -46,7 +46,7 @@ const Login = () => {
 
       <div className="login-box">
 
-        <h1>AI Interview System</h1>
+        <h1>AI Interview Bot</h1>
 
         <input
           type="email"
