@@ -13,74 +13,59 @@ body{
   background:#07122b;
   color:white;
 }
-/* LOGIN PAGE */
 
-.login-page {
-    width: 100%;
-    height: 100vh;
-    background: #0f172a;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* =========================
+LOGIN PAGE
+========================= */
+
+.login-page{
+  width:100%;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
 }
 
-.login-card {
-    width: 400px;
-    background: white;
-    padding: 40px;
-    border-radius: 15px;
-    box-shadow: 0px 0px 25px rgba(0,0,0,0.3);
-    text-align: center;
+.login-box{
+  width:400px;
+  background:#111c3d;
+  padding:40px;
+  border-radius:20px;
+  box-shadow:0 0 20px rgba(0,0,0,0.5);
 }
 
-.login-card h1 {
-    margin-bottom: 10px;
-    color: #111827;
+.login-box h1{
+  text-align:center;
+  margin-bottom:30px;
+  font-size:40px;
 }
 
-.login-subtitle {
-    color: gray;
-    margin-bottom: 25px;
+.login-box input{
+  width:100%;
+  padding:15px;
+  margin-bottom:20px;
+  border:none;
+  border-radius:10px;
+  font-size:18px;
+  outline:none;
 }
 
-.login-card input {
-    width: 100%;
-    padding: 14px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 16px;
+.login-btn{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:10px;
+  background:#2563eb;
+  color:white;
+  font-size:20px;
+  cursor:pointer;
+  transition:0.3s;
 }
 
-.login-card button {
-    width: 100%;
-    padding: 14px;
-    border: none;
-    background: #2563eb;
-    color: white;
-    font-size: 18px;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: 0.3s;
+.login-btn:hover{
+  background:#1d4ed8;
 }
 
-.login-card button:hover {
-    background: #1d4ed8;
-}
-
-/* MOBILE */
-
-@media screen and (max-width: 768px) {
-
-    .login-card {
-        width: 90%;
-        padding: 25px;
-    }
-
-    .login-card h1 {
-        font-size: 28px;
-    }
-}
 /* =========================
 MAIN INTERVIEW PAGE
 ========================= */
