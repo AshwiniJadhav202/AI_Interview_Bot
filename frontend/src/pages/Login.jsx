@@ -1,69 +1,68 @@
-import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./styles.css";
+import { useState } from "react";
+import axios from "axios";
 
-const API = import.meta.env.VITE_API_URL;
-
-const Login = () => {
+function Login() {
 
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
+
   const [password, setPassword] = useState("");
 
-  const handleLogin = async () => {
-
-    if (!email || !password) {
-      alert("Please fill all fields");
-      return;
-    }
+  const loginUser = async () => {
 
     try {
 
-      const response = await axios.post(
-        `${API}/save_login`,
+      await axios.post(
+        "http://127.0.0.1:8000/save_login",
         {
           email,
           password
         }
       );
 
-      alert(response.data.message);
+      localStorage.setItem("email", email);
 
       navigate("/interview");
 
-    } catch (error) {
-
-      console.log(error);
+    } catch (err) {
 
       alert("Backend not connected");
     }
   };
 
   return (
-
-    <div className="login-container">
+    <div className="login-page">
 
       <div className="login-box">
 
-        <h1>AI Interview Bot</h1>
+        <h1 className="login-title">
+          AI Interview Bot
+        </h1>
 
         <input
           type="email"
           placeholder="Enter Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) =>
+            setEmail(e.target.value)
+          }
         />
 
         <input
           type="password"
           placeholder="Enter Password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) =>
+            setPassword(e.target.value)
+          }
         />
 
-        <button onClick={handleLogin}>
+        <button
+          className="login-btn"
+          onClick={loginUser}
+        >
           Login
         </button>
 
@@ -71,6 +70,6 @@ const Login = () => {
 
     </div>
   );
-};
+}
 
 export default Login;
