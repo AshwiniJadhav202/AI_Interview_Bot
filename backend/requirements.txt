@@ -7,4 +7,3 @@ passlib[bcrypt]
 psycopg2-binary
 python-dotenv
 python-multipart
-sqlite3
