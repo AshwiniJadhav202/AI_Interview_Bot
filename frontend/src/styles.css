@@ -56,7 +56,7 @@ LOGIN PAGE
   border:none;
   border-radius:10px;
   background:#2563eb;
-  color:rgb(15, 6, 129);
+  color:white;
   font-size:20px;
   cursor:pointer;
   transition:0.3s;
@@ -314,54 +314,5 @@ RESPONSIVE
 
   .button-row{
     flex-direction:column;
-  }
-}
-/* MOBILE RESPONSIVE */
-
-@media screen and (max-width: 768px) {
-
-  .container,
-  .main-container,
-  .interview-container {
-    flex-direction: column !important;
-    width: 100% !important;
-    height: auto !important;
-    padding: 10px !important;
-  }
-
-  .left-panel,
-  .right-panel,
-  .left-side,
-  .right-side {
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 10px !important;
-  }
-
-  video {
-    width: 100% !important;
-    height: auto !important;
-    border-radius: 10px;
-  }
-
-  textarea,
-  input {
-    width: 100% !important;
-    font-size: 16px !important;
-  }
-
-  button {
-    width: 100% !important;
-    margin-top: 10px;
-    font-size: 16px;
-  }
-
-  .divider {
-    display: none;
-  }
-
-  h1, h2, h3 {
-    font-size: 22px !important;
-    text-align: center;
   }
 }
