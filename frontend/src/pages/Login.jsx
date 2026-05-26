@@ -43,15 +43,11 @@ const Login = () => {
 
   return (
 
-    <div className="login-page">
+    <div className="login-container">
 
-      <div className="login-card">
+      <div className="login-box">
 
-        <h1>AI Interview System</h1>
-
-        <p className="login-subtitle">
-          Smart AI Powered Mock Interview Platform
-        </p>
+        <h1>AI Interview Bot</h1>
 
         <input
           type="email"
