@@ -44,7 +44,7 @@ const Login = () => {
 
     <div className="login-container">
 
-      <div className="login-box">
+      <div className="login-box" align="center">
 
         <h1>AI Interview Bot</h1>
 
@@ -62,7 +62,7 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        <button onClick={handleLogin}>
+        <button onClick={handleLogin} size="large" variant="contained" color="primary">
           Login
         </button>
 
