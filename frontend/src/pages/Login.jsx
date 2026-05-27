@@ -19,26 +19,27 @@ function Login() {
 
       console.log("LOGIN RESPONSE:", res.data);
 
-      // ✅ STRICT ROLE CHECK (MOST IMPORTANT FIX)
-      const role = res.data?.role;
-      const token = res.data?.token;
+      // ✅ SAFE ROLE EXTRACTION (FIX)
+      const role = res.data?.role || res.data?.data?.role;
 
-      if (!res.data || !role) {
-        alert("Backend not returning role. Check /save_login API");
-        console.log("FULL RESPONSE:", res.data);
+      const token = res.data?.token || res.data?.data?.token;
+
+      if (!role) {
+        alert("Backend not returning role (check backend /save_login)");
+        console.log("DEBUG RESPONSE:", res.data);
         return;
       }
 
-      // store safely
+      // store data safely
       localStorage.setItem("token", token || "");
       localStorage.setItem("role", role);
       localStorage.setItem("email", email);
 
-      // ✅ ROLE BASED NAVIGATION FIX
+      // ROLE BASED NAVIGATION FIXED
       if (role === "admin") {
-        navigate("/admin");       // ADMIN DASHBOARD
+        navigate("/admin");     // ✅ ADMIN DASHBOARD
       } else {
-        navigate("/interview");   // USER INTERVIEW
+        navigate("/interview"); // ✅ USER INTERVIEW
       }
 
     } catch (err) {

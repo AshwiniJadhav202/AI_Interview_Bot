@@ -74,33 +74,57 @@ conn.commit()
 # =========================
 python_questions = [
     "What is inheritance in Python?",
-    "Explain polymorphism in Python?",
+    "Explain polymorphism in Python.",
     "Difference between list and tuple?",
-    "Explain OOP concepts?",
+    "Explain OOP concepts.",
+    "What is encapsulation?",
+    "What is abstraction?",
+    "Explain decorators in Python.",
+    "What are lambda functions?",
 ]
 
 java_questions = [
-    "What is Java?",
-    "What is JVM?",
+     "What is Java?",
+    "What is JVM, JRE and JDK?",
+    "What is OOP in Java?",
     "What is inheritance?",
+    "What is polymorphism?",
+    "What is abstraction?",
+    "What is interface?",
+    "What is multithreading?",
+    "What is exception handling?",
+    "What is garbage collection?",
 ]
 
 react_questions = [
     "What is React?",
+    "Explain useState hook.",
+    "Difference between props and state?",
     "What is JSX?",
-    "What is state?"
+    "What is useEffect?",
+    "Explain Virtual DOM.",
 ]
 
 sql_questions = [
-    "What is primary key?",
+      "What is primary key?",
+    "Difference between SQL and NoSQL?",
+    "Explain joins.",
     "What is normalization?",
-    "Explain joins?"
+    "What is foreign key?",
+    "Difference between DELETE and TRUNCATE?",
 ]
 
 default_questions = [
-    "Tell me about yourself.",
+   "Tell me about yourself.",
     "Why should we hire you?",
-    "Explain your project."
+    "Explain your final year project.",
+    "What are your strengths?",
+    "What are your weaknesses?",
+    "Where do you see yourself in 5 years?",
+    "Why do you want this job?",
+    "Tell me about your achievements.",
+    "How do you handle pressure?",
+    "Why should we select you?",
 ]
 
 
