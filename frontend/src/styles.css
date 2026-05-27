@@ -34,15 +34,6 @@ LOGIN PAGE
 }
 
 
-/* Login Box */
-.login-container{
-  width: 400px;
-  padding: 40px;
-  border-radius: 20px;
-  background: #0b1b4d;
-  text-align: center;
-}
-
 .login-box{
   width:400px;
   background:#111c3d;
