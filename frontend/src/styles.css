@@ -12,14 +12,7 @@ GLOBAL
 body{
   background:#07122b;
   color:white;
-  margin: 0;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #00143a;
 }
-
 
 /* =========================
 LOGIN PAGE
@@ -32,7 +25,6 @@ LOGIN PAGE
   justify-content:center;
   align-items:center;
 }
-
 
 .login-box{
   width:400px;
@@ -64,8 +56,8 @@ LOGIN PAGE
   border:none;
   border-radius:10px;
   background:#2563eb;
-  color:rgb(222, 221, 226);
-  font-size:28px;
+  color:white;
+  font-size:20px;
   cursor:pointer;
   transition:0.3s;
 }
