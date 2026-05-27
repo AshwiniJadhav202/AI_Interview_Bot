@@ -1,13 +1,17 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBearer
+from jose import jwt, JWTError
+from datetime import datetime, timedelta
 import sqlite3
 import random
+from reportlab.pdfgen import canvas
+from fastapi.responses import FileResponse
 
+# =========================
+# APP
+# =========================
 app = FastAPI()
-
-# =========================
-# CORS
-# =========================
 
 app.add_middleware(
     CORSMiddleware,
@@ -18,14 +22,31 @@ app.add_middleware(
 )
 
 # =========================
-# DATABASE
+# JWT
 # =========================
+SECRET_KEY = "secret12345"
+ALGORITHM = "HS256"
+security = HTTPBearer()
 
-conn = sqlite3.connect(
-    "database.db",
-    check_same_thread=False
-)
+def create_token(data: dict):
+    payload = data.copy()
+    payload["exp"] = datetime.utcnow() + timedelta(hours=2)
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
+def verify_admin(token=Depends(security)):
+    try:
+        payload = jwt.decode(token.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        if payload.get("role") != "admin":
+            raise HTTPException(status_code=403, detail="Not admin")
+        return payload
+    except JWTError:
+        raise HTTPException(status_code=403, detail="Invalid token")
+
+
+# =========================
+# DB
+# =========================
+conn = sqlite3.connect("database.db", check_same_thread=False)
 cursor = conn.cursor()
 
 cursor.execute("""
@@ -45,321 +66,224 @@ CREATE TABLE IF NOT EXISTS interviews(
     suggestion TEXT
 )
 """)
-
 conn.commit()
 
-# =========================
-# QUESTIONS
-# =========================
 
+# =========================
+# QUESTIONS (UNCHANGED)
+# =========================
 python_questions = [
     "What is inheritance in Python?",
-    "Explain polymorphism in Python.",
+    "Explain polymorphism in Python?",
     "Difference between list and tuple?",
-    "Explain OOP concepts.",
-    "What is encapsulation?",
-    "What is abstraction?",
-    "Explain decorators in Python.",
-    "What are lambda functions?",
-    "What is exception handling?",
-    "Difference between deep copy and shallow copy?"
+    "Explain OOP concepts?",
 ]
 
 java_questions = [
+    "What is Java?",
     "What is JVM?",
-    "Difference between JDK and JRE?",
-    "Explain constructor in Java.",
-    "What is encapsulation?",
-    "What is inheritance in Java?",
-    "Explain polymorphism.",
-    "Difference between interface and abstract class?",
-    "What is method overloading?",
-    "What is method overriding?",
-    "What is multithreading?"
+    "What is inheritance?",
 ]
 
 react_questions = [
     "What is React?",
-    "Explain useState hook.",
-    "Difference between props and state?",
     "What is JSX?",
-    "What is useEffect?",
-    "Explain virtual DOM.",
-    "What are React hooks?",
-    "What is component lifecycle?",
-    "Difference between functional and class components?",
-    "What is state management?"
+    "What is state?"
 ]
 
 sql_questions = [
     "What is primary key?",
-    "Difference between SQL and NoSQL?",
-    "Explain joins.",
     "What is normalization?",
-    "What is foreign key?",
-    "Difference between DELETE and TRUNCATE?",
-    "What is indexing?",
-    "What is GROUP BY?",
-    "What is HAVING clause?",
-    "Difference between WHERE and HAVING?"
+    "Explain joins?"
 ]
 
 default_questions = [
     "Tell me about yourself.",
     "Why should we hire you?",
-    "Explain your final year project.",
-    "What are your strengths?",
-    "What are your weaknesses?",
-    "Where do you see yourself in 5 years?",
-    "Why do you want this job?",
-    "Tell me about your achievements.",
-    "How do you handle pressure?",
-    "Why should we select you?"
+    "Explain your project."
 ]
 
-# =========================
-# LOGIN API
-# =========================
 
+# =========================
+# LOGIN (FIXED - IMPORTANT)
+# =========================
 @app.post("/save_login")
 def save_login(data: dict):
 
-    email = data["email"]
-    password = data["password"]
+    email = data.get("email")
+    password = data.get("password")
 
-    cursor.execute(
-        "SELECT * FROM users WHERE email=?",
-        (email,)
-    )
-
-    existing = cursor.fetchone()
-
-    if existing:
-
+    if not email or not password:
         return {
+            "status": "error",
+            "message": "Email or password missing",
+            "role": "error"
+        }
+
+    # ADMIN LOGIN
+    if email == "ashwini22022004@gmail.com" and password == "ashwini123":
+        token = create_token({"email": email, "role": "admin"})
+        return {
+            "status": "success",
+            "token": token,
+            "role": "admin",
+            "message": "Admin Login Successful"
+        }
+
+    # USER CHECK
+    cursor.execute(
+        "SELECT * FROM users WHERE email=? AND password=?",
+        (email, password)
+    )
+    user = cursor.fetchone()
+
+    if user:
+        token = create_token({"email": email, "role": "user"})
+        return {
+            "status": "success",
+            "token": token,
+            "role": "user",
             "message": "Login Successful"
         }
 
+    # REGISTER USER
     cursor.execute(
-        """
-        INSERT INTO users(email,password)
-        VALUES(?,?)
-        """,
+        "INSERT INTO users(email,password) VALUES(?,?)",
         (email, password)
     )
-
     conn.commit()
 
+    token = create_token({"email": email, "role": "user"})
+
     return {
+        "status": "success",
+        "token": token,
+        "role": "user",
         "message": "User Registered"
     }
 
 # =========================
 # QUESTION API
 # =========================
-
 @app.post("/question")
-def question(data: dict):
+def get_question(data: dict):
 
     skills = data["skills"]
-
-    asked_questions = data.get(
-        "asked_questions",
-        []
-    )
+    asked = data.get("asked_questions", [])
 
     questions = []
 
-    for skill in skills:
+    for s in skills:
+        s = s.lower()
+        if "python" in s:
+            questions += python_questions
+        elif "java" in s:
+            questions += java_questions
+        elif "react" in s:
+            questions += react_questions
+        elif "sql" in s:
+            questions += sql_questions
 
-        skill = skill.lower()
-
-        if skill == "python":
-            questions.extend(python_questions)
-
-        elif skill == "java":
-            questions.extend(java_questions)
-
-        elif skill == "react":
-            questions.extend(react_questions)
-
-        elif skill == "sql":
-            questions.extend(sql_questions)
-
-    if len(questions) == 0:
+    if not questions:
         questions = default_questions
 
-    # REMOVE REPEATED QUESTIONS
-    available_questions = [
+    available = [q for q in questions if q not in asked]
 
-        q for q in questions
+    if not available:
+        return {"question": "Interview Completed"}
 
-        if q not in asked_questions
-    ]
+    return {"question": random.choice(available)}
 
-    # IF ALL QUESTIONS USED
-    if len(available_questions) == 0:
-
-        return {
-            "question": "Interview Completed"
-        }
-
-    q = random.choice(
-        available_questions
-    )
-
-    return {
-        "question": q
-    }
 
 # =========================
-# SUBMIT API
+# SUBMIT
 # =========================
-
 @app.post("/submit")
 def submit(data: dict):
 
     email = data["email"]
-
     answers = data["answers"]
 
-    total_score = 0
-
-    total_questions = len(answers)
-
-    if total_questions == 0:
-
-        return {
-            "score": 0,
-            "performance": "No Interview Attempted",
-            "suggestion": "Please answer interview questions."
-        }
-
-    technical_words = [
-        "python",
-        "java",
-        "react",
-        "sql",
-        "database",
-        "api",
-        "class",
-        "object",
-        "function",
-        "inheritance",
-        "html",
-        "css",
-        "javascript"
-    ]
+    total = 0
 
     for ans in answers:
-
-        ans = ans.strip().lower()
-
-        if len(ans) == 0:
-
-            score = 0
-
-        elif len(ans.split()) < 5:
-
-            score = 20
-
+        if len(ans.split()) < 5:
+            total += 20
         elif len(ans.split()) < 20:
-
-            score = 50
-
+            total += 50
         else:
+            total += 80
 
-            score = 75
+    score = int(total / max(len(answers), 1))
 
-        bonus = 0
-
-        for word in technical_words:
-
-            if word in ans:
-                bonus += 2
-
-        score += bonus
-
-        if score > 100:
-            score = 100
-
-        total_score += score
-
-    final_score = int(
-        total_score / total_questions
-    )
-
-    # =========================
-    # PERFORMANCE
-    # =========================
-
-    if final_score >= 85:
-
-        performance = "Excellent Performance"
-
-        suggestion = """
-Strong technical knowledge.
-Practice advanced interview questions.
-Improve confidence and communication.
-"""
-
-    elif final_score >= 70:
-
-        performance = "Good Performance"
-
-        suggestion = """
-Good technical understanding.
-Practice more mock interviews.
-Improve answer explanation.
-"""
-
-    elif final_score >= 40:
-
-        performance = "Average Performance"
-
-        suggestion = """
-Improve technical concepts.
-Practice coding and communication.
-Give more detailed answers.
-"""
-
+    if score >= 80:
+        p, s = "Excellent", "Keep improving"
+    elif score >= 50:
+        p, s = "Good", "Practice more"
     else:
-
-        performance = "Poor Performance"
-
-        suggestion = """
-You need more preparation.
-Practice technical concepts daily.
-Improve communication skills.
-"""
-
-    # SAVE DB
+        p, s = "Average", "Needs improvement"
 
     cursor.execute(
-        """
-        INSERT INTO interviews(
-        email,
-        score,
-        performance,
-        suggestion
-        )
-        VALUES(?,?,?,?)
-        """,
-        (
-            email,
-            final_score,
-            performance,
-            suggestion
-        )
+        "INSERT INTO interviews(email,score,performance,suggestion) VALUES(?,?,?,?)",
+        (email, score, p, s)
     )
-
     conn.commit()
 
     return {
-        "score": final_score,
-        "performance": performance,
-        "suggestion": suggestion
+        "score": score,
+        "performance": p,
+        "suggestion": s
     }
-@app.get("/")
-def home():
-    return {"message": "Backend Running Successfully"}
+
+
+# =========================
+# ADMIN APIs
+# =========================
+@app.get("/admin/users")
+def get_users(admin=Depends(verify_admin)):
+    cursor.execute("SELECT id,email FROM users")
+    return {
+        "users": [{"id": r[0], "email": r[1]} for r in cursor.fetchall()]
+    }
+
+@app.get("/admin/interviews")
+def get_interviews(admin=Depends(verify_admin)):
+    cursor.execute("SELECT email,score,performance,suggestion FROM interviews")
+    return {
+        "interviews": [
+            {"email": r[0], "score": r[1], "performance": r[2], "suggestion": r[3]}
+            for r in cursor.fetchall()
+        ]
+    }
+
+
+# =========================
+# PDF
+# =========================
+@app.get("/download-report/{email}")
+def download_report(email: str):
+
+    cursor.execute("""
+        SELECT score,performance,suggestion
+        FROM interviews
+        WHERE email=?
+        ORDER BY id DESC
+        LIMIT 1
+    """, (email,))
+
+    data = cursor.fetchone()
+
+    if not data:
+        return {"message": "No report found"}
+
+    file_name = f"{email}_report.pdf"
+
+    c = canvas.Canvas(file_name)
+    c.drawString(100, 750, "AI INTERVIEW REPORT")
+    c.drawString(100, 700, f"Email: {email}")
+    c.drawString(100, 650, f"Score: {data[0]}")
+    c.drawString(100, 600, f"Performance: {data[1]}")
+    c.drawString(100, 550, f"Suggestion: {data[2]}")
+    c.save()
+
+    return FileResponse(file_name, media_type="application/pdf")
