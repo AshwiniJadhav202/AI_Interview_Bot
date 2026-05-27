@@ -7,3 +7,8 @@ passlib[bcrypt]
 psycopg2-binary
 python-dotenv
 python-multipart
+fastapi
+uvicorn
+python-jose
+sqlite3
+reportlab
