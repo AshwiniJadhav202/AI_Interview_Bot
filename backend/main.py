@@ -311,3 +311,17 @@ def download_report(email: str):
     c.save()
 
     return FileResponse(file_name, media_type="application/pdf")
+
+# =========================
+# ROOT API
+# =========================
+@app.get("/")
+def root():
+    return {"message": "AI Interview Backend Running"}
+
+# =========================
+# RENDER / VERCEL START
+# =========================
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
