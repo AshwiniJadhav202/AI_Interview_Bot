@@ -21,6 +21,11 @@ function Interview() {
   const [started, setStarted] = useState(false);
 
   // =========================
+  // ⏱ INTERVIEW TIMER (NEW)
+  // =========================
+  const [timeLeft, setTimeLeft] = useState(600); // 10 minutes
+
+  // =========================
   // 🎥 RECORDING SYSTEM
   // =========================
   const mediaRecorderRef = useRef(null);
@@ -71,6 +76,34 @@ function Interview() {
       streamRef.current = null;
     }
   };
+
+  // =========================
+  // ⏱ TIMER START (NEW)
+  // =========================
+  useEffect(() => {
+
+    let timer;
+
+    if (started && timeLeft > 0) {
+
+      timer = setInterval(() => {
+
+        setTimeLeft((prev) => prev - 1);
+
+      }, 1000);
+    }
+
+    // AUTO SUBMIT WHEN TIME ENDS
+    if (timeLeft === 0) {
+
+      alert("Interview Time Completed");
+
+      submitInterview();
+    }
+
+    return () => clearInterval(timer);
+
+  }, [started, timeLeft]);
 
   // =========================
   // RECORDING START
@@ -254,6 +287,9 @@ function Interview() {
 
     setQuestionCount(1);
 
+    // TIMER RESET
+    setTimeLeft(600);
+
     // ✅ CAMERA + MIC START HERE
     await startCameraAndMic();
 
@@ -375,6 +411,16 @@ function Interview() {
       <div className="left-panel">
 
         <h2>AI Interview</h2>
+
+        {/* ⏱ TIMER UI */}
+        <div className="timer-box">
+          <h3>Interview Timer</h3>
+
+          <p>
+            {Math.floor(timeLeft / 60)}:
+            {(timeLeft % 60).toString().padStart(2, "0")}
+          </p>
+        </div>
 
         <div className="camera-box">
           <video ref={videoRef} autoPlay muted />
