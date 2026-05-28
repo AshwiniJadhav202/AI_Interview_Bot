@@ -21,7 +21,7 @@ function Interview() {
   const [started, setStarted] = useState(false);
 
   // =========================
-  // 🎥 RECORDING SYSTEM (NEW)
+  // 🎥 RECORDING SYSTEM
   // =========================
   const mediaRecorderRef = useRef(null);
   const chunksRef = useRef([]);
@@ -29,52 +29,88 @@ function Interview() {
   const [recording, setRecording] = useState(false);
 
   // =========================
-  // CAMERA (OLD)
+  // 🎥 CAMERA STREAM REF
   // =========================
-  useEffect(() => {
+  const streamRef = useRef(null);
 
-    navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true
-    })
-      .then((stream) => {
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-      })
-      .catch(() => {
-        alert("Allow Camera & Microphone");
+  // =========================
+  // CAMERA + MIC START ONLY
+  // WHEN INTERVIEW STARTS
+  // =========================
+  const startCameraAndMic = async () => {
+    try {
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
       });
 
-  }, []);
+      streamRef.current = stream;
 
-  // =========================
-  // RECORDING START (NEW)
-  // =========================
-  const startRecording = async () => {
-
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: true,
-    });
-
-    mediaRecorderRef.current = new MediaRecorder(stream);
-    chunksRef.current = [];
-
-    mediaRecorderRef.current.ondataavailable = (e) => {
-      if (e.data.size > 0) {
-        chunksRef.current.push(e.data);
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
       }
-    };
 
-    mediaRecorderRef.current.start();
-    setRecording(true);
+    } catch (err) {
+      alert("Please allow Camera & Microphone");
+      console.log(err);
+    }
   };
 
   // =========================
-  // RECORDING STOP (NEW)
+  // STOP CAMERA + MIC
+  // =========================
+  const stopCameraAndMic = () => {
+
+    if (streamRef.current) {
+
+      streamRef.current.getTracks().forEach((track) => {
+        track.stop();
+      });
+
+      streamRef.current = null;
+    }
+  };
+
+  // =========================
+  // RECORDING START
+  // =========================
+  const startRecording = async () => {
+
+    try {
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      });
+
+      mediaRecorderRef.current = new MediaRecorder(stream);
+
+      chunksRef.current = [];
+
+      mediaRecorderRef.current.ondataavailable = (e) => {
+
+        if (e.data.size > 0) {
+          chunksRef.current.push(e.data);
+        }
+      };
+
+      mediaRecorderRef.current.start();
+
+      setRecording(true);
+
+    } catch (err) {
+      console.log(err);
+      alert("Recording permission denied");
+    }
+  };
+
+  // =========================
+  // RECORDING STOP
   // =========================
   const stopRecording = () => {
+
+    if (!mediaRecorderRef.current) return;
 
     mediaRecorderRef.current.stop();
 
@@ -87,8 +123,10 @@ function Interview() {
       const url = URL.createObjectURL(blob);
 
       const a = document.createElement("a");
+
       a.href = url;
       a.download = "interview-recording.webm";
+
       a.click();
     };
 
@@ -96,7 +134,7 @@ function Interview() {
   };
 
   // =========================
-  // PDF DOWNLOAD (NEW)
+  // PDF DOWNLOAD
   // =========================
   const downloadPDF = () => {
 
@@ -109,21 +147,31 @@ function Interview() {
   };
 
   // =========================
-  // REST OF YOUR CODE (UNCHANGED)
+  // RESUME UPLOAD
   // =========================
-
   const uploadResume = async (e) => {
 
     const file = e.target.files[0];
+
     if (!file) return;
 
     const text = await file.text();
 
     let detectedSkills = [];
 
-    const allSkills = ["Python", "Java", "React", "SQL", "JavaScript", "HTML", "CSS", "C++"];
+    const allSkills = [
+      "Python",
+      "Java",
+      "React",
+      "SQL",
+      "JavaScript",
+      "HTML",
+      "CSS",
+      "C++"
+    ];
 
     allSkills.forEach((skill) => {
+
       if (text.toLowerCase().includes(skill.toLowerCase())) {
         detectedSkills.push(skill);
       }
@@ -132,17 +180,24 @@ function Interview() {
     setSkills(detectedSkills);
   };
 
+  // =========================
+  // TEXT TO SPEECH
+  // =========================
   const speakQuestion = (text) => {
 
     window.speechSynthesis.cancel();
 
     const speech = new SpeechSynthesisUtterance(text);
+
     speech.lang = "en-US";
     speech.rate = 1;
 
     window.speechSynthesis.speak(speech);
   };
 
+  // =========================
+  // SPEECH TO TEXT
+  // =========================
   const startSpeechRecognition = () => {
 
     const SpeechRecognition =
@@ -188,11 +243,19 @@ function Interview() {
     recognition.start();
   };
 
+  // =========================
+  // START INTERVIEW
+  // =========================
   const startInterview = async () => {
 
     setStarted(true);
+
     setAnswer("");
+
     setQuestionCount(1);
+
+    // ✅ CAMERA + MIC START HERE
+    await startCameraAndMic();
 
     const res = await axios.post(
       "http://127.0.0.1:8000/question",
@@ -213,6 +276,9 @@ function Interview() {
     }, 3000);
   };
 
+  // =========================
+  // NEXT QUESTION
+  // =========================
   const nextQuestion = async () => {
 
     if (answer.trim() !== "") {
@@ -256,6 +322,9 @@ function Interview() {
     }, 3000);
   };
 
+  // =========================
+  // AUTO NEXT QUESTION
+  // =========================
   useEffect(() => {
 
     if (started) {
@@ -269,6 +338,9 @@ function Interview() {
 
   }, [question]);
 
+  // =========================
+  // SUBMIT INTERVIEW
+  // =========================
   const submitInterview = async () => {
 
     const email = localStorage.getItem("email");
@@ -287,100 +359,108 @@ function Interview() {
       recognitionRef.current.stop();
     }
 
-    if (videoRef.current?.srcObject) {
-      videoRef.current.srcObject.getTracks().forEach(track => track.stop());
-    }
+    // ✅ CAMERA + MIC OFF
+    stopCameraAndMic();
 
     window.location.href = "/result";
   };
 
   // =========================
-  // UI (UPDATED ONLY BUTTONS ADDED)
+  // UI
   // =========================
   return (
-  <div className="main-container">
+    <div className="main-container">
 
-    {/* LEFT PANEL */}
-    <div className="left-panel">
+      {/* LEFT PANEL */}
+      <div className="left-panel">
 
-      <h2>AI Interview</h2>
+        <h2>AI Interview</h2>
 
-      <div className="camera-box">
-        <video ref={videoRef} autoPlay muted />
-      </div>
-
-      <div className="resume-upload">
-        <input type="file" onChange={uploadResume} />
-      </div>
-
-      <div className="skills-box">
-        <h3>Detected Skills</h3>
-
-        {skills.map((skill, index) => (
-          <span key={index} className="skill-tag">
-            {skill}
-          </span>
-        ))}
-      </div>
-
-      <button className="start-btn" onClick={startInterview}>
-        Start Interview
-      </button>
-
-    </div>
-
-    {/* RIGHT PANEL */}
-    <div className="right-panel">
-
-      {/* QUESTION BOX */}
-      <div className="question-box">
-        <h1>AI Question</h1>
-        <p className="question-text">
-          {question || "Click Start Interview to begin"}
-        </p>
-      </div>
-
-      {/* ANSWER BOX */}
-      <textarea
-        className="answer-box"
-        value={answer}
-        placeholder="Speak or type your answer..."
-        onChange={(e) => setAnswer(e.target.value)}
-      />
-
-      {/* BUTTONS */}
-      <div className="button-section">
-
-        <div className="primary-buttons">
-          <button className="next-btn" onClick={nextQuestion}>
-            Next Question
-          </button>
-
-          <button className="submit-btn" onClick={submitInterview}>
-            Submit Interview
-          </button>
+        <div className="camera-box">
+          <video ref={videoRef} autoPlay muted />
         </div>
 
-        <div className="secondary-buttons">
-          <button className="record-btn" onClick={startRecording}>
-            Start Recording
-          </button>
+        <div className="resume-upload">
+          <input type="file" onChange={uploadResume} />
+        </div>
 
-          <button className="stop-btn" onClick={stopRecording}>
-            Stop Recording
-          </button>
+        <div className="skills-box">
 
-          <button className="pdf-btn" onClick={downloadPDF}>
-            Download PDF
-          </button>
+          <h3>Detected Skills</h3>
+
+          {skills.map((skill, index) => (
+            <span key={index} className="skill-tag">
+              {skill}
+            </span>
+          ))}
+
+        </div>
+
+        <button className="start-btn" onClick={startInterview}>
+          Start Interview
+        </button>
+
+      </div>
+
+      {/* RIGHT PANEL */}
+      <div className="right-panel">
+
+        {/* QUESTION BOX */}
+        <div className="question-box">
+
+          <h1>AI Question</h1>
+
+          <p className="question-text">
+            {question || "Click Start Interview to begin"}
+          </p>
+
+        </div>
+
+        {/* ANSWER BOX */}
+        <textarea
+          className="answer-box"
+          value={answer}
+          placeholder="Speak or type your answer..."
+          onChange={(e) => setAnswer(e.target.value)}
+        />
+
+        {/* BUTTONS */}
+        <div className="button-section">
+
+          <div className="primary-buttons">
+
+            <button className="next-btn" onClick={nextQuestion}>
+              Next Question
+            </button>
+
+            <button className="submit-btn" onClick={submitInterview}>
+              Submit Interview
+            </button>
+
+          </div>
+
+          <div className="secondary-buttons">
+
+            <button className="record-btn" onClick={startRecording}>
+              Start Recording
+            </button>
+
+            <button className="stop-btn" onClick={stopRecording}>
+              Stop Recording
+            </button>
+
+            <button className="pdf-btn" onClick={downloadPDF}>
+              Download PDF
+            </button>
+
+          </div>
+
         </div>
 
       </div>
 
     </div>
-
-  </div>
-);
+  );
 }
 
 export default Interview;
