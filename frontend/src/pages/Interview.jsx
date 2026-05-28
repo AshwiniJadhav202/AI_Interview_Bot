@@ -174,7 +174,7 @@ function Interview() {
     const email = localStorage.getItem("email");
 
     window.open(
-      `http://127.0.0.1:8000/download-report/${email}`,
+      `https://ai-interview-bot-e1ue.onrender.com/download-report/${email}`,
       "_blank"
     );
   };
@@ -294,7 +294,7 @@ function Interview() {
     await startCameraAndMic();
 
     const res = await axios.post(
-      "http://127.0.0.1:8000/question",
+     "https://ai-interview-bot-e1ue.onrender.com/question",
       {
         skills: skills,
         asked_questions: []
@@ -333,7 +333,7 @@ function Interview() {
     }
 
     const res = await axios.post(
-      "http://127.0.0.1:8000/question",
+      "https://ai-interview-bot-e1ue.onrender.com/question",
       {
         skills: skills,
         asked_questions: askedQuestions
@@ -382,7 +382,7 @@ function Interview() {
     const email = localStorage.getItem("email");
 
     const res = await axios.post(
-      "http://127.0.0.1:8000/submit",
+      "https://ai-interview-bot-e1ue.onrender.com/submit",
       {
         email: email,
         answers: [...allAnswers, answer]

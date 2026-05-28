@@ -12,10 +12,13 @@ function Login() {
 
   const loginUser = async () => {
     try {
-      const res = await axios.post(`${API}/save_login`, {
-        email,
-        password,
-      });
+      const res = await axios.post(
+  "https://ai-interview-bot-e1ue.onrender.com/save_login",
+  {
+    email,
+    password,
+  }
+);
 
       console.log("LOGIN RESPONSE:", res.data);
 
