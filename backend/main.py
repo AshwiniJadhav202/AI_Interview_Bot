@@ -79,8 +79,6 @@ python_questions = [
     "Explain OOP concepts.",
     "What is encapsulation?",
     "What is abstraction?",
-    "Explain decorators in Python.",
-    "What are lambda functions?",
 ]
 
 java_questions = [
@@ -90,19 +88,13 @@ java_questions = [
     "What is inheritance?",
     "What is polymorphism?",
     "What is abstraction?",
-    "What is interface?",
     "What is multithreading?",
     "What is exception handling?",
-    "What is garbage collection?",
+
 ]
 
 react_questions = [
     "What is React?",
-    "Explain useState hook.",
-    "Difference between props and state?",
-    "What is JSX?",
-    "What is useEffect?",
-    "Explain Virtual DOM.",
 ]
 
 sql_questions = [
